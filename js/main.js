@@ -53,7 +53,7 @@ const osItem = (p) => `<div class="item"><h3>${esc(p.osTitle || p.title)}</h3>${
   + `<p>${esc(p.short)}${(p.links || []).map((l) => ' ' + linkHtml(l)).join('')}${readMore(p)}</p></div>`;
 const osList = (kind) => projects.filter((p) => p.kind === kind).map(osItem).join('');
 const OS_APPS = {
-  about: { glyph: 'i', label: 'About', html: `<h3>${esc(site.about.title)}</h3>${site.about.paragraphs.map((t) => `<p>${esc(t)}</p>`).join('')}<p class="meta">${esc(site.about.tip)}</p>` },
+  about: { glyph: 'i', label: 'About', html: `${site.about.title ? `<h3>${esc(site.about.title)}</h3>` : ''}${site.about.paragraphs.map((t) => `<p>${esc(t)}</p>`).join('')}${site.about.tip ? `<p class="meta">${esc(site.about.tip)}</p>` : ''}` },
   research: { glyph: 'R', label: 'Research', html: osList('research') },
   projects: { glyph: 'P', label: 'Projects', html: osList('project') },
   contact: { glyph: '@', label: 'Contact', html: `<h3>${esc(site.contact.title)}</h3>`

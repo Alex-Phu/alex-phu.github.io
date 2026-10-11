@@ -27,7 +27,7 @@ The concept is inspired by henryheffernan.com and is credited on the page. No co
 | `js/os.js` | AlexOS: the monitor version and the phone panel, app windows and project windows. |
 | `js/sound.js` | Web Audio synthesis. |
 | `data/projects.json` | Every project and research item. The one source for cards and AlexOS windows. |
-| `data/site.json` | About and Contact text, the email, and the Computer label. |
+| `data/site.json` | About and Contact text, the email, and the Computer label. About's `title` and `tip` are optional. |
 | `assets/projects/<id>/` | Web-ready images and videos for each project window. |
 | `assets/desk.glb` | The baked room exported from Blender (about 2.2 MB), loaded directly by `GLTFLoader`. |
 | `tools/scene.py` | Builds the room in Blender (bpy), bakes lighting with Cycles, exports `desk.glb`. |
