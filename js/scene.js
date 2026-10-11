@@ -199,43 +199,6 @@ export function buildFallback() {
 }
 
 /* ---------- Baked model from Blender ---------- */
-// The baked model ships as base64 text next to the page; decode it and hand the bytes to GLTFLoader.
-function b64bytes(text) {
-  const raw = atob(text.trim());
-  const bytes = new Uint8Array(raw.length);
-  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-  return bytes;
-}
-function decodeDesk(text) {
-  return new Promise((resolve, reject) => new GLTFLoader().parse(b64bytes(text).buffer, '', resolve, reject));
-}
-// Baked textures are embedded as separate JPEGs and decoded without blob: URLs,
-// which some viewers block.
-const TEX = {};
-async function loadTextures(onProgress) {
-  const els = [...document.querySelectorAll('script[data-tex]')];
-  let done = 0;
-  for (const el of els) {
-    const mime = el.dataset.mime || 'image/jpeg';
-    let img;
-    try {
-      img = await createImageBitmap(new Blob([b64bytes(el.textContent)], { type: mime }));
-    } catch (e) {
-      img = await new Promise((res, rej) => {
-        const i = new Image();
-        i.onload = () => res(i); i.onerror = rej;
-        i.src = 'data:' + mime + ';base64,' + el.textContent.trim();
-      });
-    }
-    const t = new THREE.Texture(img);
-    t.flipY = false;
-    t.colorSpace = THREE.SRGBColorSpace;
-    t.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    t.needsUpdate = true;
-    TEX[el.dataset.tex] = t;
-    onProgress(++done / els.length);
-  }
-}
 // Downloads the baked room. onProgress gets 0..1 as the bytes arrive.
 const DESK_URL = 'assets/desk.glb';
 const DESK_BYTES = 2252420; // size estimate, used only if the server does not send a length
@@ -268,7 +231,7 @@ export function useDesk(gltf) {
     }
     let m = shared.get(o.material);
     if (!m) {
-      const map = TEX[o.material.name] || o.material.map;
+      const map = o.material.map;
       if (map) { map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = aniso; }
       m = map ? new THREE.MeshBasicMaterial({ map }) : new THREE.MeshBasicMaterial({ color: 0xd9d4cc });
       shared.set(o.material, m);
