@@ -29,7 +29,7 @@ The concept is inspired by henryheffernan.com and is credited on the page. No co
 | `js/os.js` | AlexOS: the monitor version and the phone panel, app windows and project windows. |
 | `js/sound.js` | Web Audio synthesis. |
 | `data/projects.json` | Every project and research item. The one source for cards and AlexOS windows. |
-| `data/site.json` | Search details (`seo`: page title, description, bio, school), About and Contact text, the email, and the Computer label. About's `title` and `tip` are optional. The profile links in `contact.links` also become the Person data's `sameAs`. |
+| `data/site.json` | Search details (`seo`: page title, description, bio, school), About and Contact text, the email, and the Computer label. About's `title` and `tip` are optional. The Person data uses `seo.name` (Alexander Phu) with `seo.alternateName` (Alex Phu); its `sameAs` links are `contact.links` (GitHub, LinkedIn) plus `seo.profiles` (ORCID). |
 | `assets/projects/<id>/` | Web-ready images and videos for each project window. |
 | `assets/desk.glb` | The baked room exported from Blender (about 2.2 MB), loaded directly by `GLTFLoader`. |
 | `tools/build_seo.py` | Writes the `<head>` block in `index.html` (title, description, canonical link, Person structured data), `plain.html` and `sitemap.xml` from the data files. |
