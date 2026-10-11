@@ -93,6 +93,6 @@ Done when: https://alexphu.com loads the site with a valid certificate.
 * GPU baking. Help Alex run `python tools/scene.py out final gpu` on his Windows PC (RTX 5070 Ti, Python 3.13, `pip install bpy numpy pillow scipy`). This path is untested. Confirm the log says it baked on the GPU.
 * Fast recolor. Add a mode to `scene.py` that re-bakes only the albedo pass and reuses the saved lighting, for color-only changes.
 * Link previews. Add Open Graph and Twitter meta tags with a screenshot of the room, so shared links show an image.
-* Plain page. Add a lightweight `plain.html` generated from `projects.json`, for screen readers, search engines, and slow devices, and link it from the BIOS screen.
+* Plain page. Add a lightweight `plain.html` generated from `projects.json`, for screen readers, search engines, and slow devices, and link it from the BIOS screen. Done (Oct 2026) with `tools/build_seo.py`, along with search tags, Person structured data, `sitemap.xml` and `robots.txt`.
 * Room edits. New objects for new projects need a Blender object with a matching prefix in `scene.py`, a re-bake, and a JSON entry.
 * Small known issues. Chess pieces look tinted when glowing. Keyboard and mouse are excluded from the glow on purpose.

@@ -21,15 +21,18 @@ The concept is inspired by henryheffernan.com and is credited on the page. No co
 | Path | What it is |
 | --- | --- |
 | `index.html` | Page structure only: BIOS screen, header, buttons, card and phone OS panel, plus the three.js import map. |
+| `plain.html` | Text version of the whole site (no 3D, no JavaScript) for Google, screen readers and slow devices. Generated; linked from the BIOS screen. |
+| `sitemap.xml`, `robots.txt` | For search engines. `sitemap.xml` is generated; `robots.txt` is fixed and points to it. |
 | `css/style.css` | All styles, including AlexOS project windows. |
 | `js/main.js` | Entry point (ES module): loads `data/`, builds the cards, explore buttons and AlexOS windows from it, runs the BIOS boot sequence, page state, pointer and keys, render loop. |
 | `js/scene.js` | Renderers, model loading, camera moves, glow outlines, hotspot picking. |
 | `js/os.js` | AlexOS: the monitor version and the phone panel, app windows and project windows. |
 | `js/sound.js` | Web Audio synthesis. |
 | `data/projects.json` | Every project and research item. The one source for cards and AlexOS windows. |
-| `data/site.json` | About and Contact text, the email, and the Computer label. About's `title` and `tip` are optional. |
+| `data/site.json` | Search details (`seo`: page title, description, bio, school), About and Contact text, the email, and the Computer label. About's `title` and `tip` are optional. The profile links in `contact.links` also become the Person data's `sameAs`. |
 | `assets/projects/<id>/` | Web-ready images and videos for each project window. |
 | `assets/desk.glb` | The baked room exported from Blender (about 2.2 MB), loaded directly by `GLTFLoader`. |
+| `tools/build_seo.py` | Writes the `<head>` block in `index.html` (title, description, canonical link, Person structured data), `plain.html` and `sitemap.xml` from the data files. |
 | `tools/scene.py` | Builds the room in Blender (bpy), bakes lighting with Cycles, exports `desk.glb`. |
 | `HANDOFF.md` | The phased to-do list for this site. |
 | `media-inbox/` | Alex's original photos and videos. Git-ignored: never commit it, only the processed copies in `assets/projects/`. |
@@ -93,6 +96,7 @@ Originals go in `media-inbox/` (git-ignored). Before anything goes into `assets/
 ## Content rules
 
 - Project and paper text lives in `data/projects.json`. About and Contact live in `data/site.json`. Edit the JSON, not the JS.
+- After editing either JSON file, run `python3 tools/build_seo.py` and commit what it changes, so `plain.html`, the search tags and the sitemap match the 3D site. Do not edit the `seo:start` to `seo:end` block in `index.html` by hand.
 - The email also appears in `CONTACT` in `js/main.js`, which the BIOS shows if the data files fail to load. Change both together.
 - AskAAPM and the 3D-printed shield manuscripts are "submitted". Keep statuses accurate.
 - Project window text must come from Alex or from what his own screenshots and videos show. Do not add metrics or results he has not confirmed.

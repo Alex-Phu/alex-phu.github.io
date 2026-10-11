@@ -1,4 +1,13 @@
 {
+  "seo": {
+    "name": "Alex Phu",
+    "url": "https://alexphu.com/",
+    "title": "Alex Phu · Student Researcher and Developer",
+    "description": "Alex Phu, a senior at Greenhill School in Dallas, builds tools at the intersection of AI, medicine, and sport. Explore his projects and research.",
+    "jobTitle": "Student researcher and developer",
+    "affiliation": "Greenhill School",
+    "bio": "A senior at Greenhill School in Dallas who builds tools at the intersection of AI, medicine, and sport."
+  },
   "email": "AlexPhu2009@gmail.com",
   "computer": {
     "label": "Computer",

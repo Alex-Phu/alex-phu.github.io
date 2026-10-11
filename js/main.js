@@ -207,7 +207,8 @@ addEventListener('pointercancel', () => { press = null; });
 // (such as the card's buttons). Cancel it for taps that start on the room itself.
 $('#stage').addEventListener('touchend', (e) => { if (!os.el.contains(e.target)) e.preventDefault(); }, { passive: false });
 addEventListener('keydown', (e) => {
-  if (state === 'boot' && !bootBtn.disabled && e.key !== 'Tab') { e.preventDefault(); boot(); return; }
+  // any key boots, except Tab and keys pressed on a link (the BIOS "text version" link)
+  if (state === 'boot' && !bootBtn.disabled && e.key !== 'Tab' && !e.target.closest?.('a')) { e.preventDefault(); boot(); return; }
   if (state !== 'boot' && !e.repeat && !['Shift', 'Control', 'Alt', 'Meta', 'CapsLock'].includes(e.key)) sound.key();
   if (e.key === 'Escape') backToRoom();
 });

@@ -46,6 +46,9 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--s
 #boot:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 @keyframes blink { 50% { background: var(--accent); } }
 #bios.gone { opacity: 0; pointer-events: none; }
+#bios .plain { margin-top: 22px; align-self: flex-start; color: var(--bios-ink); opacity: .7; font-size: .8em; }
+#bios .plain:hover, #bios .plain:focus-visible { opacity: 1; color: var(--accent); }
+.noscript { position: fixed; inset: auto 16px 16px; z-index: 30; margin: 0; padding: 12px 14px; background: var(--panel); color: var(--ink); border: 1px solid var(--accent); font: 15px var(--sans); }
 
 /* ---------- Chrome ---------- */
 .ui { position: fixed; z-index: 5; }
