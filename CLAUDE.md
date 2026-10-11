@@ -97,6 +97,7 @@ Originals go in `media-inbox/` (git-ignored). Before anything goes into `assets/
 
 - Project and paper text lives in `data/projects.json`. About and Contact live in `data/site.json`. Edit the JSON, not the JS.
 - After editing either JSON file, run `python3 tools/build_seo.py` and commit what it changes, so `plain.html`, the search tags and the sitemap match the 3D site. Do not edit the `seo:start` to `seo:end` block in `index.html` by hand.
+- `index.html` has a `google-site-verification` meta tag (Search Console ownership). It sits just above the generated block; do not remove it.
 - The email also appears in `CONTACT` in `js/main.js`, which the BIOS shows if the data files fail to load. Change both together.
 - AskAAPM and the 3D-printed shield manuscripts are "submitted". Keep statuses accurate.
 - Project window text must come from Alex or from what his own screenshots and videos show. Do not add metrics or results he has not confirmed.
