@@ -138,7 +138,7 @@ function select(id) {
   card.hidden = false;
   room.goTo(room.spotView(id), 1100);
 }
-// Opens a project window on the monitor (or the phone panel). Also used by links like alex-phu.github.io/#kinetiq.
+// Opens a project window on the monitor (or the phone panel). Also used by links like alexphu.com/#kinetiq.
 function openProject(id) {
   if (state === 'boot' || !PAGES[id]) return;
   hideHint();

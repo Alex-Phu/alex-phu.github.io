@@ -1,7 +1,8 @@
 # Alex Phu portfolio site
 
-Live at https://alex-phu.github.io (GitHub Pages: repo `Alex-Phu/alex-phu.github.io`, branch `main`, folder `/`).
-Custom domain `alexphu.com` is planned but not bought yet.
+Live at https://alexphu.com (GitHub Pages: repo `Alex-Phu/alex-phu.github.io`, branch `main`, folder `/`). The old address https://alex-phu.github.io redirects there.
+
+The domain is registered at Porkbun, which also runs its DNS: four A and four AAAA records for `alexphu.com` pointing at GitHub Pages, and a CNAME for `www` pointing to `alex-phu.github.io`. The `CNAME` file in this repo tells GitHub Pages which domain to serve; do not delete it. Leave Porkbun's MX, SPF and `_acme-challenge` records alone (email forwarding and Porkbun's SSL). WHOIS privacy is on at Porkbun; keep it on.
 
 ## What the site is
 
@@ -62,7 +63,7 @@ Each entry in `projects` (file order is display order):
 
 | Field | Used for |
 | --- | --- |
-| `id` | Stable name. Also the share link: `alex-phu.github.io/#<id>` boots straight into that project's window. |
+| `id` | Stable name. Also the share link: `alexphu.com/#<id>` boots straight into that project's window. |
 | `prefix` | Blender object prefix that makes it clickable in the room, or `null` if it has no object. |
 | `kind` | `research` or `project`: which AlexOS window lists it. |
 | `title` | Card heading and AlexOS heading. `osTitle` overrides the AlexOS heading if it should differ. |
@@ -101,5 +102,4 @@ Originals go in `media-inbox/` (git-ignored). Before anything goes into `assets/
 
 - AskAAPM screenshot: a cleaned copy is at `media-inbox/processed/askaapm-answer.webp` (not committed). Alex wants to show part of it, pending his mentor's or lab's OK. Add it to `media` only after that.
 - Project windows for the remaining projects (3D shield, VISTA-3D, Vital Tracker, RV Park), plus a link to a redacted resume PDF.
-- Connect `alexphu.com`: four A records for `@` (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153) and a CNAME for `www` pointing to `alex-phu.github.io`.
 - Optional speedup: re-bake only the colors (reuse the lighting pass) when an object is just recolored.
