@@ -10,6 +10,8 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let renderer, css, scene, camera, osObj;
 const spotMeshes = []; // every mesh the pointer can hit
+const solids = []; // every visible surface in the room, clickable or not
+const hitBoxes = []; // invisible padded boxes around clickable meshes (see addHitBoxes)
 const meshesById = {}; // spot id -> its meshes
 export const ndc = new THREE.Vector2(9, 9); // pointer position, set by main.js
 
@@ -94,7 +96,28 @@ export function useDesk(gltf) {
     const id = o.name.split('_')[0];
     if (meshesById[id]) { o.material = m.clone(); tagMesh(o, id); } else o.material = m;
   });
+  root.traverse((o) => { if (o.isMesh && o.name !== 'sky') solids.push(o); });
+  addHitBoxes();
   placeOS();
+}
+
+// Thin objects like the racket (frame and strings) were hard to hit exactly, so each clickable mesh
+// also gets an invisible box around it, padded by HIT_PAD. The box only counts when nothing solid
+// is in front of it (see pick), so the chair still blocks the tower behind it.
+const HIT_PAD = 2; // cm
+function addHitBoxes() {
+  for (const [id, meshes] of Object.entries(meshesById)) {
+    for (const m of meshes) {
+      if (m.name === 'screen') continue; // the monitor itself already covers it
+      const b = new THREE.Box3().setFromObject(m).expandByScalar(HIT_PAD);
+      const box = new THREE.Mesh(new THREE.BoxGeometry(...b.getSize(new V3()).toArray()), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
+      b.getCenter(box.position);
+      box.visible = false; // never drawn; the raycaster still tests it
+      box.userData.spot = id;
+      box.updateMatrixWorld(true);
+      hitBoxes.push(box);
+    }
+  }
 }
 
 /* ---------- Glow outlines on clickable objects ---------- */
@@ -222,8 +245,12 @@ const ray = new THREE.Raycaster();
 // id of the clickable object under the pointer, or null
 export function pick() {
   ray.setFromCamera(ndc, camera);
-  const hit = ray.intersectObjects(spotMeshes, false)[0];
-  return hit ? hit.object.userData.spot : null;
+  const first = ray.intersectObjects(solids.length ? solids : spotMeshes, false)[0]; // nearest real surface
+  if (first?.object.userData.spot) return first.object.userData.spot;
+  // a near miss: accept the padded box if it is not behind something else
+  const near = ray.intersectObjects(hitBoxes, false)[0];
+  if (near && (!first || near.distance <= first.distance + HIT_PAD)) return near.object.userData.spot;
+  return null;
 }
 // brighten an object while it is hovered
 export function highlight(id, on) {
