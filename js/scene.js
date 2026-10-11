@@ -21,6 +21,11 @@ export function initScene(spotIds, stage) {
   renderer.setClearColor(0xdcd8d1, 1);
   renderer.toneMapping = THREE.NoToneMapping; // lighting is baked into the textures
   css = new CSS3DRenderer();
+  // Focusing or scrolling to something inside AlexOS would otherwise scroll this clipped layer
+  // and slide the whole desktop off the monitor.
+  const layer = css.domElement;
+  layer.style.overflow = 'clip';
+  layer.addEventListener('scroll', () => { layer.scrollTop = 0; layer.scrollLeft = 0; });
   stage.append(css.domElement, renderer.domElement);
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(35, 1, 1, 3000);
