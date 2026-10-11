@@ -1,0 +1,98 @@
+{
+  "projects": [
+    {
+      "id": "askaapm",
+      "prefix": "askaapm",
+      "kind": "research",
+      "title": "AskAAPM",
+      "label": "AskAAPM",
+      "hint": "First-author research",
+      "tag": "FIRST AUTHOR · SUMMER 2026",
+      "meta": "First author · submitted to AAPM 2027 Spring Clinical Conference and JACMP",
+      "summary": "A retrieval-augmented system that answers questions about AAPM Task Group Reports and cites the source passages. Submitted to the AAPM 2027 Spring Clinical Conference and the Journal of Applied Clinical Medical Physics.",
+      "short": "Cited question answering over AAPM Task Group Reports.",
+      "tech": ["RAG", "FastAPI", "Streamlit", "FastMCP"],
+      "links": [{ "label": "View GitHub", "url": "https://github.com/Alex-Phu/" }],
+      "media": [],
+      "page": null
+    },
+    {
+      "id": "shield",
+      "prefix": "shield",
+      "kind": "research",
+      "title": "3D-Printed Shield",
+      "osTitle": "3D-Printed Radiation Shield",
+      "label": "3D shield",
+      "hint": "Medical physics",
+      "tag": "CONTRIBUTOR · SUMMER 2026",
+      "meta": "Contributor · submitted to Brachytherapy",
+      "summary": "An application that turns treatment-planning CT data into a printable STL shield and an updated DICOM RT Structure Set for gynecologic brachytherapy. Manuscript submitted to Brachytherapy.",
+      "short": "CT data to a printable patient-specific shield.",
+      "tech": ["Python", "DICOM", "STL", "3D printing"],
+      "links": [],
+      "media": [],
+      "page": null
+    },
+    {
+      "id": "vista3d",
+      "prefix": null,
+      "kind": "research",
+      "title": "VISTA-3D Segmentation Pipeline",
+      "meta": "Lab project · 2025",
+      "short": "Python and FastAPI around NVIDIA VISTA-3D in Docker.",
+      "links": [],
+      "media": [],
+      "page": null
+    },
+    {
+      "id": "kinetiq",
+      "prefix": "kinetiq",
+      "kind": "project",
+      "title": "KinetIQ",
+      "label": "KinetIQ",
+      "hint": "Swing analyzer",
+      "tag": "COMPUTER VISION · SPORT · 2026–",
+      "summary": "An AI-assisted swing analyzer that tracks body and racket motion from video, then turns it into timing and consistency feedback for players and coaches. Submitted to the 2026 Congressional App Challenge.",
+      "short": "Swing analysis from video with computer vision.",
+      "tech": ["Computer vision", "Biomechanics", "Data viz"],
+      "links": [],
+      "media": [],
+      "page": null
+    },
+    {
+      "id": "chessai",
+      "prefix": "chess",
+      "kind": "project",
+      "title": "ChessAI Assistant",
+      "label": "ChessAI",
+      "hint": "AR chess assistant",
+      "tag": "COMPUTER VISION · AR · 2025–26",
+      "summary": "Custom YOLO models and OpenCV read the board from Ray-Ban Meta camera feeds. Stockfish then suggests moves and explains tactics as the game unfolds.",
+      "short": "YOLO + OpenCV + Stockfish on smart-glasses video.",
+      "tech": ["YOLO", "OpenCV", "Python", "Stockfish"],
+      "links": [],
+      "media": [],
+      "page": null
+    },
+    {
+      "id": "vitaltracker",
+      "prefix": null,
+      "kind": "project",
+      "title": "Vital Tracker + BreathWork",
+      "short": "SwiftUI and HealthKit apps.",
+      "links": [{ "label": "Devpost", "url": "https://devpost.com/software/easybreathe-wl5s60" }],
+      "media": [],
+      "page": null
+    },
+    {
+      "id": "rvpark",
+      "prefix": null,
+      "kind": "project",
+      "title": "RV Park Comparison",
+      "short": "Search and compare parks by amenities and pricing.",
+      "links": [{ "label": "Open", "url": "https://rvparkcomparison.lovable.app/" }],
+      "media": [],
+      "page": null
+    }
+  ]
+}

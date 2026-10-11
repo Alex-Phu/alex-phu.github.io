@@ -1,0 +1,19 @@
+{
+  "email": "AlexPhu2009@gmail.com",
+  "computer": { "label": "Computer", "hint": "Click to use AlexOS" },
+  "about": {
+    "title": "Hi, I'm Alex.",
+    "paragraphs": [
+      "Greenhill School, Class of 2027. I build software that turns complex information into tools people can use, across medicine, health, and sport.",
+      "Two summers in UT Southwestern's Medical AI and Automation Lab. Varsity tennis. Founder of Greenhill's Buddhist Affinity Group."
+    ],
+    "tip": "Tip: click objects on the desk to see more projects."
+  },
+  "contact": {
+    "title": "Say hello",
+    "links": [
+      { "label": "GitHub", "url": "https://github.com/Alex-Phu/" },
+      { "label": "LinkedIn", "url": "https://www.linkedin.com/in/alexander-phu-1bb2b02b6/" }
+    ]
+  }
+}
