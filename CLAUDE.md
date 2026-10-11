@@ -21,10 +21,12 @@ The concept is inspired by henryheffernan.com and is credited on the page. No co
 | --- | --- |
 | `index.html` | Page structure only: BIOS screen, header, buttons, card and phone OS panel, plus the three.js import map. |
 | `css/style.css` | All styles. |
-| `js/main.js` | Entry point (ES module): page content (`SPOTS`, `OS_APPS`), BIOS boot sequence, page state, pointer and keys, render loop. |
+| `js/main.js` | Entry point (ES module): loads `data/`, builds the cards, explore buttons and AlexOS windows from it, runs the BIOS boot sequence, page state, pointer and keys, render loop. |
 | `js/scene.js` | Renderers, model loading, camera moves, glow outlines, hotspot picking. |
 | `js/os.js` | AlexOS: the monitor version and the phone panel. |
 | `js/sound.js` | Web Audio synthesis. |
+| `data/projects.json` | Every project and research item. The one source for cards and AlexOS windows. |
+| `data/site.json` | About and Contact text, the email, and the Computer label. |
 | `assets/desk.glb` | The baked room exported from Blender (about 2.2 MB), loaded directly by `GLTFLoader`. |
 | `tools/scene.py` | Builds the room in Blender (bpy), bakes lighting with Cycles, exports `desk.glb`. |
 | `HANDOFF.md` | The phased to-do list for this site. |
@@ -46,21 +48,41 @@ A final bake took about 12 minutes on a 2-core CPU. The GPU path (OptiX/CUDA) is
 ## How the 3D scene fits together
 
 - Blender units are meters with Z up. The page scales the model by 100, so scene units are centimeters.
-- Clickable objects are found by name prefix: `computer_`, `askaapm_`, `shield_`, `kinetiq_`, `chess_`. Each prefix matches a key in the `SPOTS` object in `js/main.js`, which holds the card text. Objects without a prefix are decoration.
+- Clickable objects are found by name prefix: `computer_`, `askaapm_`, `shield_`, `kinetiq_`, `chess_`. Each prefix matches the `prefix` of a project in `data/projects.json` (`computer` is defined in `data/site.json`). Objects without a prefix are decoration.
 - The `screen` plane marks where AlexOS is placed. The `sky` plane is the backdrop seen through the window.
 - Baking: an albedo pass (2048 px) times a diffuse lighting pass (1024 px, cleaned with a masked blur), then ACES tone mapping, saved as one JPEG atlas per group (room, desk, computer, props). The page uses `MeshBasicMaterial` with `NoToneMapping`.
 - The BIOS progress bar follows the real download of `desk.glb`. GitHub Pages gzips the file, so the bar divides by `DESK_BYTES` in `js/scene.js`, the uncompressed size. Update it after a re-bake (`ls -l assets/desk.glb`). If the model fails to load, the BIOS screen says so, shows the contact email, and BOOT stays disabled.
 - Glow outlines are inflated back-face copies of each clickable mesh, offset in screen space. Pieces thinner than 3 mm (racket strings, filament) are left out so they do not fill with color.
 
+## Project data (`data/projects.json`)
+
+Each entry in `projects` (file order is display order):
+
+| Field | Used for |
+| --- | --- |
+| `id` | Stable name, for future pages at `projects/<id>.html`. |
+| `prefix` | Blender object prefix that makes it clickable in the room, or `null` if it has no object. |
+| `kind` | `research` or `project`: which AlexOS window lists it. |
+| `title` | Card heading and AlexOS heading. `osTitle` overrides the AlexOS heading if it should differ. |
+| `label`, `hint` | Explore button text and hover tooltip (only for entries with a `prefix`). |
+| `tag`, `summary`, `tech` | Card: small label, paragraph, and tech chips (only for entries with a `prefix`). |
+| `meta` | Optional gray line under the AlexOS heading (role and status). |
+| `short` | One-line description in AlexOS. |
+| `links` | `[{ "label", "url" }]`. All show in AlexOS; the first also shows on the card. |
+| `media` | Not shown yet. Planned format for Phase 3: `[{ "type": "image" or "video", "src", "alt", "caption" }]`. |
+| `page` | Not shown yet. Planned for Phase 3: path of the project's own page. |
+
+To add a project, add one entry. To make it clickable in the room, it also needs a Blender object with that prefix in `tools/scene.py` and a re-bake.
+
 ## Content rules
 
-- Project and paper text lives in `SPOTS` and `OS_APPS` in `js/main.js`. Phase 2 of `HANDOFF.md` moves it into `data/projects.json`.
+- Project and paper text lives in `data/projects.json`. About and Contact live in `data/site.json`. Edit the JSON, not the JS.
+- The email also appears in `CONTACT` in `js/main.js`, which the BIOS shows if the data files fail to load. Change both together.
 - AskAAPM and the 3D-printed shield manuscripts are "submitted". Keep statuses accurate.
 - The contact email shown on the site is public on purpose. Never publish a home address or phone number, including in any resume PDF.
 
 ## Planned next
 
-- A `data/projects.json` as the one source for project content.
-- Richer pages that visualize projects and research, plus a link to a redacted resume PDF.
+- Richer pages that visualize projects and research (filling `media` and `page`), plus a link to a redacted resume PDF.
 - Connect `alexphu.com`: four A records for `@` (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153) and a CNAME for `www` pointing to `alex-phu.github.io`.
 - Optional speedup: re-bake only the colors (reuse the lighting pass) when an object is just recolored.
