@@ -48,9 +48,9 @@ const SPOTS = { computer: site.computer };
 for (const p of projects) if (p.prefix) SPOTS[p.prefix] = p;
 
 // AlexOS windows. Research and Projects list every project of that kind, in file order.
+const readMore = (p) => (p.details ? ` <button class="more" type="button" data-project="${esc(p.id)}">Read more</button>` : '');
 const osItem = (p) => `<div class="item"><h3>${esc(p.osTitle || p.title)}</h3>${p.meta ? `<p class="meta">${esc(p.meta)}</p>` : ''}`
-  + `<p>${esc(p.short)}${(p.links || []).map((l) => ' ' + linkHtml(l)).join('')}`
-  + `${p.page ? ` <a href="${esc(p.page)}" target="_blank" rel="noopener">Read more</a>` : ''}</p></div>`;
+  + `<p>${esc(p.short)}${(p.links || []).map((l) => ' ' + linkHtml(l)).join('')}${readMore(p)}</p></div>`;
 const osList = (kind) => projects.filter((p) => p.kind === kind).map(osItem).join('');
 const OS_APPS = {
   about: { glyph: 'i', label: 'About', html: `<h3>${esc(site.about.title)}</h3>${site.about.paragraphs.map((t) => `<p>${esc(t)}</p>`).join('')}<p class="meta">${esc(site.about.tip)}</p>` },
@@ -61,6 +61,25 @@ const OS_APPS = {
     + `<p>${site.contact.links.map(linkHtml).join(' &nbsp; ')}</p>` },
 };
 
+// Project windows ("Read more"): every project with `details` gets one, opened inside AlexOS.
+const mediaHtml = (m) => `<figure>${m.type === 'video'
+  ? `<video src="${esc(m.src)}"${m.poster ? ` poster="${esc(m.poster)}"` : ''} width="${m.width}" height="${m.height}" ${reduceMotion ? '' : 'autoplay '}muted loop playsinline controls preload="metadata" aria-label="${esc(m.alt)}"></video>`
+  : `<img src="${esc(m.src)}" alt="${esc(m.alt)}" width="${m.width}" height="${m.height}" loading="lazy">`}`
+  + `${m.caption ? `<figcaption>${esc(m.caption)}</figcaption>` : ''}</figure>`;
+const list = (items) => `<ul>${items.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`;
+function pageHtml(p) {
+  const d = p.details;
+  return `<div class="page">${p.tag ? `<p class="meta">${esc(p.tag)}</p>` : ''}<h3>${esc(p.title)}</h3>`
+    + `<p>${esc(p.summary || p.short)}</p>${(p.media || []).map(mediaHtml).join('')}`
+    + `<h4>What I built</h4>${list(d.built)}`
+    + `<h4>How it works</h4><ol class="flow">${d.steps.map((t, i) => `<li><span class="n">${i + 1}</span>${esc(t)}</li>`).join('')}</ol>`
+    + `${p.tech ? `<h4>Tools</h4><ul class="chips">${p.tech.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}`
+    + `${d.results && d.results.length ? `<h4>Status</h4>${list(d.results)}` : ''}`
+    + `${p.links && p.links.length ? `<p class="links">${p.links.map(linkHtml).join(' &nbsp; ')}</p>` : ''}</div>`;
+}
+const PAGES = {};
+for (const p of projects) if (p.details) PAGES[p.id] = { title: p.title, from: p.kind === 'research' ? 'research' : 'projects', html: pageHtml(p) };
+
 /* ---------- Room + AlexOS ---------- */
 try {
   room.initScene(Object.keys(SPOTS), $('#stage'));
@@ -70,7 +89,7 @@ try {
   print(CONTACT);
   throw e;
 }
-const os = createOS(OS_APPS);
+const os = createOS(OS_APPS, PAGES);
 room.addOS(os.el);
 const isPhone = () => matchMedia('(max-width: 700px)').matches;
 
@@ -93,7 +112,7 @@ function setState(next, id = null) {
   document.body.classList.toggle('zoomed', next === 'monitor' || next === 'focus');
   explore.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.spot === id || (next === 'monitor' && b.dataset.spot === 'computer'))));
   if (next !== 'focus') card.hidden = true;
-  if (next !== 'monitor') os.closePhone();
+  if (next !== 'monitor') { os.closePhone(); setHash(''); }
   tip.hidden = true;
 }
 function select(id) {
@@ -112,16 +131,34 @@ function select(id) {
   if (first) { link.hidden = false; link.textContent = first.label + ' ↗'; link.href = first.url; } else link.hidden = true;
   // project page: "Read more" plus a preview (first screenshot, else the first video's poster)
   const media = s.media || [], m = media.find((x) => x.type === 'image') || media[0];
-  const more = $('#cMore'), thumb = $('#cThumb');
-  more.hidden = !s.page; if (s.page) more.href = s.page;
-  thumb.hidden = !(s.page && m);
-  if (s.page && m) { thumb.href = s.page; thumb.setAttribute('aria-label', `Open the ${s.title} page`); thumb.firstElementChild.src = m.poster || m.src; }
+  const more = $('#cMore'), thumb = $('#cThumb'), hasPage = !!PAGES[s.id];
+  more.hidden = !hasPage; more.dataset.project = s.id;
+  thumb.hidden = !(hasPage && m); thumb.dataset.project = s.id;
+  if (hasPage && m) { thumb.setAttribute('aria-label', `Read more about ${s.title}`); thumb.firstElementChild.src = m.poster || m.src; }
   card.hidden = false;
   room.goTo(room.spotView(id), 1100);
+}
+// Opens a project window on the monitor (or the phone panel). Also used by links like alex-phu.github.io/#kinetiq.
+function openProject(id) {
+  if (state === 'boot' || !PAGES[id]) return;
+  hideHint();
+  if (state !== 'monitor') { setState('monitor'); room.goTo(room.monitorView(), 1100); }
+  os.openPage(id, isPhone());
+  setHash(id);
+}
+function setHash(id) {
+  if (location.hash.slice(1) === id) return;
+  history.replaceState(null, '', id ? '#' + id : location.pathname + location.search);
 }
 function backToRoom() { if (state === 'boot' || state === 'overview') return; setState('overview'); room.goTo(room.overviewView(), 1100); }
 backBtn.addEventListener('click', backToRoom);
 $('#cardClose').addEventListener('click', backToRoom);
+for (const b of [$('#cMore'), $('#cThumb')]) b.addEventListener('click', () => openProject(b.dataset.project));
+// keep the address bar in step with windows opened inside AlexOS, so the link can be shared
+for (const el of [os.el, $('#mos')]) el.addEventListener('click', (e) => {
+  const page = e.target.closest('[data-project]');
+  if (page) setHash(page.dataset.project); else if (e.target.closest('[data-app], .os-close')) setHash('');
+});
 $('#mosClose').addEventListener('click', backToRoom);
 
 /* ---------- Pointer ---------- */
@@ -144,7 +181,10 @@ addEventListener('pointermove', (e) => {
   } else tip.hidden = true;
 });
 addEventListener('click', (e) => {
-  if (state === 'boot' || e.target.closest('.ui') || os.el.contains(e.target)) return;
+  // composedPath() is fixed when the click starts, so this still works when AlexOS has
+  // replaced the clicked button (opening a window rewrites its contents)
+  const path = e.composedPath();
+  if (state === 'boot' || path.includes(os.el) || path.some((n) => n.classList?.contains('ui'))) return;
   setPointer(e);
   const id = room.pick();
   if (state === 'monitor') { if (id !== 'computer') backToRoom(); return; }
@@ -211,7 +251,8 @@ const hint = $('#hint');
 function hideHint() { if (hint.hidden) return; hint.classList.add('fade'); setTimeout(() => { hint.hidden = true; }, 650); }
 function boot() {
   if (state !== 'boot') return;
-  setTimeout(() => { hint.hidden = false; setTimeout(hideHint, 9000); }, reduceMotion ? 0 : 2200);
+  const deepLink = location.hash.slice(1);
+  setTimeout(() => { if (state !== 'overview') return; hint.hidden = false; setTimeout(hideHint, 9000); }, reduceMotion ? 0 : 2200);
   sound.init();
   sound.chime();
   setTimeout(sound.ambience, 2200);
@@ -219,6 +260,7 @@ function boot() {
   setTimeout(() => { $('#bios').hidden = true; }, reduceMotion ? 0 : 650);
   setState('overview');
   room.goTo(room.overviewView(), 2400, room.easeOutExpo);
+  openProject(deepLink);
 }
 bootBtn.addEventListener('click', boot);
 start();

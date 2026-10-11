@@ -89,10 +89,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 #card ul { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 14px 0 0; }
 #card li { font-family: var(--pixel); font-size: 17px; background: var(--chip); border: 1px solid var(--line); padding: 1px 7px; }
 #card .card-links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 16px; }
-#card .card-links a { color: var(--accent); font-weight: 600; font-size: 14px; }
-#card .card-links:not(:has(a:not([hidden]))) { display: none; }
-/* preview of the project's first image or video; opens the project page */
-#cThumb { display: block; margin-top: 14px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: #111; }
+#card .card-links a, #cMore { color: var(--accent); font-weight: 600; font-size: 14px; }
+#cMore { font-family: var(--sans); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+#card .card-links:not(:has(:not([hidden]))) { display: none; }
+/* preview of the project's first image or video; opens its window in AlexOS */
+#cThumb { display: block; width: 100%; padding: 0; cursor: pointer; margin-top: 14px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: #111; }
 #cThumb img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; object-position: top; }
 #cThumb:hover { border-color: var(--accent); }
 #cardClose { position: absolute; top: 10px; right: 10px; background: none; border: 0; color: var(--muted); font-size: 22px; cursor: pointer; }
@@ -186,5 +187,30 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .os-body .item { padding-bottom: 14px; margin-bottom: 14px; border-bottom: 2px dashed rgba(23,35,33,.25); }
 .os-body .item:last-child { border-bottom: 0; }
 .os-body button.copy { font: 22px var(--pixel); background: var(--os-ink); color: var(--os-win); border: 0; padding: 2px 10px; cursor: pointer; margin-left: 8px; }
+.os-title .os-wt { flex: 1; }
+.os-title .os-back { margin-right: 10px; }
+.os-body button.more { font: inherit; background: none; border: 0; padding: 0; color: #0f5d56; text-decoration: underline; cursor: pointer; }
+
+/* project windows ("Read more"): maximized over the icons */
+.os-win.max { left: 14px; top: 52px; width: 932px; height: 534px; }
+.os-body .page h3 { font-size: 40px; }
+.os-body .page h4 { margin: 22px 0 8px; font-weight: 400; font-size: 30px; }
+.os-body .page ul { margin: 0 0 8px; padding-left: 26px; }
+.os-body .page figure { margin: 4px 0 14px; }
+.os-body .page video, .os-body .page img { display: block; width: 100%; height: auto; background: #111; border: 2px solid var(--os-ink); }
+.os-body .page figcaption { margin-top: 4px; font-size: 21px; color: #6b4a2f; }
+.os-body .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 24px; }
+.os-body .flow li { position: relative; border: 2px solid var(--os-ink); background: rgba(255,255,255,.45); padding: 6px 8px; font-size: 21px; line-height: 1.05; }
+.os-body .flow li + li::before { content: "→"; position: absolute; left: -21px; top: 50%; transform: translateY(-50%); color: #0f5d56; }
+.os-body .flow .n { display: block; color: #0f5d56; font-size: 26px; }
+.os-body .chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0 !important; }
+.os-body .chips li { background: var(--os-ink); color: var(--os-win); padding: 0 8px; }
+.os-body .page .links { margin-top: 18px; }
+#mos .os-body button.back { display: block; margin-bottom: 12px; }
+#mos .os-body .page h3 { font-size: 32px; }
+#mos .os-body .page h4 { font-size: 26px; }
+#mos .os-body .flow { grid-auto-flow: row; gap: 18px; }
+#mos .os-body .flow li { display: flex; gap: 8px; align-items: baseline; }
+#mos .os-body .flow li + li::before { content: "↓"; left: 14px; top: -19px; transform: none; }
 
 @media (prefers-reduced-motion: reduce) { #boot:not(:disabled) { animation: none; } #bios { transition: none; } }

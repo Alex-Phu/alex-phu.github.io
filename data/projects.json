@@ -24,7 +24,6 @@
         }
       ],
       "media": [],
-      "page": "projects/askaapm.html",
       "details": {
         "built": [
           "A question-answering system for AAPM Task Group Reports.",
@@ -62,8 +61,7 @@
         "3D printing"
       ],
       "links": [],
-      "media": [],
-      "page": null
+      "media": []
     },
     {
       "id": "vista3d",
@@ -73,8 +71,7 @@
       "meta": "Lab project · 2025",
       "short": "Python and FastAPI around NVIDIA VISTA-3D in Docker.",
       "links": [],
-      "media": [],
-      "page": null
+      "media": []
     },
     {
       "id": "kinetiq",
@@ -89,7 +86,10 @@
       "tech": [
         "Computer vision",
         "Biomechanics",
-        "Data viz"
+        "Data viz",
+        "MediaPipe",
+        "React",
+        "FastAPI"
       ],
       "links": [
         {
@@ -124,7 +124,6 @@
           "caption": "Pick the activity, drop in a video, and run."
         }
       ],
-      "page": "projects/kinetiq.html",
       "details": {
         "built": [
           "An upload screen for four activities: tennis forehand, tennis serve, golf swing, and golf putt.",
@@ -178,7 +177,6 @@
           "caption": "Here ChessAI reads a Chess.com game through screen capture: it labels every piece, writes out the position, and suggests a move."
         }
       ],
-      "page": "projects/chessai.html",
       "details": {
         "built": [
           "Custom YOLO models that find each piece and label it with its color, type, and square, such as bR @ a8 for the black rook on a8.",
@@ -208,8 +206,7 @@
           "url": "https://devpost.com/software/easybreathe-wl5s60"
         }
       ],
-      "media": [],
-      "page": null
+      "media": []
     },
     {
       "id": "rvpark",
@@ -223,8 +220,7 @@
           "url": "https://rvparkcomparison.lovable.app/"
         }
       ],
-      "media": [],
-      "page": null
+      "media": []
     }
   ]
 }
