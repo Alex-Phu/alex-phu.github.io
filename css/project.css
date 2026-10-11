@@ -1,0 +1,84 @@
+/* Project pages (projects/<id>.html): a plain reading page in the same palette and fonts as the room. */
+:root {
+  color-scheme: light;
+  --bg: #f4f1ec;
+  --ink: #1f2826;
+  --muted: #5d6865;
+  --accent: #0f766e;
+  --warm: #b4532a;
+  --panel: #fbfaf7;
+  --line: #d8d2c8;
+  --chip: #efebe4;
+  --pixel: "VT323", ui-monospace, "Courier New", monospace;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 var(--sans); }
+a { color: var(--accent); }
+a:focus-visible, video:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.top {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  max-width: 880px; margin: 0 auto; padding: max(16px, env(safe-area-inset-top, 0px)) 20px 0;
+}
+.top .name { font: 30px/1 var(--pixel); color: var(--ink); text-decoration: none; }
+.top .back { font-weight: 600; font-size: 14px; text-decoration: none; }
+.top .back:hover { text-decoration: underline; }
+
+main { max-width: 880px; margin: 0 auto; padding: 28px 20px 8px; }
+.tag { margin: 0; font: 20px var(--pixel); color: var(--warm); }
+h1 { margin: 2px 0 0; font: 400 clamp(46px, 9vw, 72px)/1 var(--pixel); }
+.meta { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+.lead { margin: 18px 0 0; font-size: 18px; max-width: 68ch; }
+
+.media { margin: 28px 0 0; }
+.media video, .media img {
+  display: block; width: 100%; height: auto; background: #111;
+  border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 14px 34px rgba(60, 50, 35, .14);
+}
+.media figcaption { margin-top: 8px; color: var(--muted); font-size: 14px; }
+.media.hero { margin-top: 32px; }
+
+section { margin-top: 44px; }
+h2 { margin: 0 0 14px; font: 400 32px/1 var(--pixel); }
+section .media:first-of-type { margin-top: 0; }
+.built { margin: 0; padding-left: 20px; max-width: 70ch; }
+.built li + li { margin-top: 6px; }
+
+/* "How it works": numbered steps joined by arrows, in a row on wide screens and a column on phones */
+.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 28px; }
+.flow li {
+  position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+  padding: 12px 12px 14px; font-size: 14px; line-height: 1.45;
+}
+.flow li + li::before {
+  content: "→"; position: absolute; left: -22px; top: 50%; transform: translateY(-50%);
+  color: var(--accent); font: 22px/1 var(--pixel);
+}
+.flow .n { display: block; font: 24px/1 var(--pixel); color: var(--accent); margin-bottom: 6px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.chips li { font: 19px var(--pixel); background: var(--chip); border: 1px solid var(--line); padding: 1px 9px; }
+
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn {
+  display: inline-block; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--accent);
+  background: var(--panel); border: 1px solid var(--accent); border-radius: 6px; padding: 9px 14px;
+}
+.btn:hover { background: var(--accent); color: var(--panel); }
+
+footer {
+  max-width: 880px; margin: 56px auto 0; padding: 20px 20px max(28px, env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--line); color: var(--muted); font-size: 14px;
+}
+footer p { margin: 4px 0; }
+
+@media (max-width: 700px) {
+  main { padding-top: 20px; }
+  .top, main, footer { padding-left: 16px; padding-right: 16px; }
+  .lead { font-size: 17px; }
+  .flow { grid-auto-flow: row; gap: 22px; }
+  .flow li { display: flex; align-items: baseline; gap: 10px; }
+  .flow .n { margin: 0; }
+  .flow li + li::before { content: "↓"; left: 22px; top: -20px; transform: none; }
+}
