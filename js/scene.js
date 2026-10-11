@@ -218,10 +218,14 @@ export function overviewView() {
   const d = Math.max(dir.length(), fitDist(125));
   return { pos: tgt.clone().add(dir.normalize().multiplyScalar(d)), tgt: tgt.clone() };
 }
-export function monitorView() {
+// phone: AlexOS opens in its own panel there, so the camera does not need to face the screen
+export function monitorView(phone = false) {
   const t = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
   const d = Math.max((SCREEN.h * 1.3) / 2 / t, (SCREEN.w * 1.3) / 2 / (t * camera.aspect));
-  return { pos: SCREEN.center.clone().add(new V3(0, 0, d)), tgt: SCREEN.center.clone() };
+  // A narrow screen needs the camera far back, behind the chair, whose backrest then hides the
+  // monitor. On phones, look down at the monitor from higher up, over the chair.
+  const dir = phone ? new V3(0, 0.6, 1).normalize() : new V3(0, 0, 1);
+  return { pos: SCREEN.center.clone().add(dir.multiplyScalar(d)), tgt: SCREEN.center.clone() };
 }
 export function spotView(id) {
   const b = new THREE.Box3();

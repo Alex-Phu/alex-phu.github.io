@@ -119,7 +119,7 @@ function select(id) {
   if (state === 'boot') return;
   hideHint();
   if (id === 'computer') {
-    setState('monitor'); room.goTo(room.monitorView(), 1100);
+    setState('monitor'); room.goTo(room.monitorView(isPhone()), 1100);
     if (isPhone()) os.openPhone('about');
     return;
   }
@@ -142,7 +142,7 @@ function select(id) {
 function openProject(id) {
   if (state === 'boot' || !PAGES[id]) return;
   hideHint();
-  if (state !== 'monitor') { setState('monitor'); room.goTo(room.monitorView(), 1100); }
+  if (state !== 'monitor') { setState('monitor'); room.goTo(room.monitorView(isPhone()), 1100); }
   os.openPage(id, isPhone());
   setHash(id);
 }
@@ -216,7 +216,7 @@ addEventListener('keydown', (e) => {
 /* ---------- Resize + loop ---------- */
 function resize() {
   room.resize(innerWidth, innerHeight);
-  if (state === 'monitor') room.goTo(room.monitorView(), 0);
+  if (state === 'monitor') room.goTo(room.monitorView(isPhone()), 0);
   if (state === 'overview' && !room.isAnimating()) room.goTo(room.overviewView(), 0);
   paintSound();
 }
