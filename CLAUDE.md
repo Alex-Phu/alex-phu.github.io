@@ -32,7 +32,7 @@ The concept is inspired by henryheffernan.com and is credited on the page. No co
 | `data/site.json` | Search details (`seo`: page title, description, bio, school), About and Contact text, the email, and the Computer label. About's `title` and `tip` are optional. The Person data uses `seo.name` (Alexander Phu) with `seo.alternateName` (Alex Phu); its `sameAs` links are `contact.links` (GitHub, LinkedIn) plus `seo.profiles` (ORCID). |
 | `assets/projects/<id>/` | Web-ready images and videos for each project window. |
 | `assets/desk.glb` | The baked room exported from Blender (about 2.2 MB), loaded directly by `GLTFLoader`. |
-| `tools/build_seo.py` | Writes the `<head>` block in `index.html` (title, description, canonical link, Person structured data), `plain.html` and `sitemap.xml` from the data files. |
+| `tools/build_seo.py` | Writes the `<head>` block in `index.html` (title, description, canonical link, Person structured data), the visible intro at the bottom of the BIOS screen (`intro:start` to `intro:end`, so Google sees real text on the homepage), `plain.html` and `sitemap.xml` from the data files. |
 | `tools/scene.py` | Builds the room in Blender (bpy), bakes lighting with Cycles, exports `desk.glb`. |
 | `HANDOFF.md` | The phased to-do list for this site. |
 | `media-inbox/` | Alex's original photos and videos. Git-ignored: never commit it, only the processed copies in `assets/projects/`. |
