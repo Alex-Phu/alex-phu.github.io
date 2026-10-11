@@ -70,6 +70,8 @@ Alex wants visitors to understand his projects and research much better than a s
 
 Done when: each chosen project has a page, and the card and OS both link to it.
 
+Changed by Alex (Oct 2026): "Read more" stays on the computer. Each project opens as a window inside AlexOS instead of a separate page, and `#<id>` links open it directly. Done for KinetIQ, ChessAI and AskAAPM (text only; its screenshot stays off).
+
 ## Phase 4: Resume PDF
 
 1. Get a resume PDF from Alex. It must not include his street address or phone number.
