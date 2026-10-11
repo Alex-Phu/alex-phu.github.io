@@ -49,7 +49,8 @@ for (const p of projects) if (p.prefix) SPOTS[p.prefix] = p;
 
 // AlexOS windows. Research and Projects list every project of that kind, in file order.
 const osItem = (p) => `<div class="item"><h3>${esc(p.osTitle || p.title)}</h3>${p.meta ? `<p class="meta">${esc(p.meta)}</p>` : ''}`
-  + `<p>${esc(p.short)}${(p.links || []).map((l) => ' ' + linkHtml(l)).join('')}</p></div>`;
+  + `<p>${esc(p.short)}${(p.links || []).map((l) => ' ' + linkHtml(l)).join('')}`
+  + `${p.page ? ` <a href="${esc(p.page)}" target="_blank" rel="noopener">Read more</a>` : ''}</p></div>`;
 const osList = (kind) => projects.filter((p) => p.kind === kind).map(osItem).join('');
 const OS_APPS = {
   about: { glyph: 'i', label: 'About', html: `<h3>${esc(site.about.title)}</h3>${site.about.paragraphs.map((t) => `<p>${esc(t)}</p>`).join('')}<p class="meta">${esc(site.about.tip)}</p>` },
@@ -109,6 +110,12 @@ function select(id) {
   $('#cTech').innerHTML = (s.tech || []).map((t) => `<li>${esc(t)}</li>`).join('');
   const link = $('#cLink'), first = (s.links || [])[0];
   if (first) { link.hidden = false; link.textContent = first.label + ' ↗'; link.href = first.url; } else link.hidden = true;
+  // project page: "Read more" plus a preview (first screenshot, else the first video's poster)
+  const media = s.media || [], m = media.find((x) => x.type === 'image') || media[0];
+  const more = $('#cMore'), thumb = $('#cThumb');
+  more.hidden = !s.page; if (s.page) more.href = s.page;
+  thumb.hidden = !(s.page && m);
+  if (s.page && m) { thumb.href = s.page; thumb.setAttribute('aria-label', `Open the ${s.title} page`); thumb.firstElementChild.src = m.poster || m.src; }
   card.hidden = false;
   room.goTo(room.spotView(id), 1100);
 }
