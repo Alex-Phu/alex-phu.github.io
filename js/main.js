@@ -180,18 +180,32 @@ addEventListener('pointermove', (e) => {
     tip.style.left = e.clientX + 'px'; tip.style.top = e.clientY + 'px'; tip.hidden = false;
   } else tip.hidden = true;
 });
-addEventListener('click', (e) => {
-  // composedPath() is fixed when the click starts, so this still works when AlexOS has
-  // replaced the clicked button (opening a window rewrites its contents)
+// Taps on the room are read from pointerdown/pointerup, not 'click': iPhone Safari never sends
+// a click for a tap on a plain element like the 3D stage, so objects could not be tapped there.
+let press = null;
+addEventListener('pointerdown', (e) => {
+  if (state !== 'boot' && e.button === 0) sound.mouse(true);
+  // composedPath() is fixed when the press starts, so it still counts as inside AlexOS
+  // even if AlexOS rewrites the pressed button (opening a window replaces its contents)
   const path = e.composedPath();
-  if (state === 'boot' || path.includes(os.el) || path.some((n) => n.classList?.contains('ui'))) return;
+  const onUi = path.includes(os.el) || path.some((n) => n.classList?.contains('ui'));
+  press = e.isPrimary && e.button === 0 && !onUi ? { x: e.clientX, y: e.clientY, t: performance.now() } : null;
+});
+addEventListener('pointerup', (e) => {
+  if (state !== 'boot' && e.button === 0) sound.mouse(false);
+  const p = press; press = null;
+  if (!p || !e.isPrimary || state === 'boot') return;
+  // a drag or a long press is not a tap
+  if (Math.hypot(e.clientX - p.x, e.clientY - p.y) > 12 || performance.now() - p.t > 700) return;
   setPointer(e);
   const id = room.pick();
   if (state === 'monitor') { if (id !== 'computer') backToRoom(); return; }
   if (id && id !== focusId) select(id); else if (!id) backToRoom();
 });
-addEventListener('pointerdown', (e) => { if (state !== 'boot' && e.button === 0) sound.mouse(true); });
-addEventListener('pointerup', (e) => { if (state !== 'boot' && e.button === 0) sound.mouse(false); });
+addEventListener('pointercancel', () => { press = null; });
+// The browser's own click arrives after a tap, by then over whatever just opened under the finger
+// (such as the card's buttons). Cancel it for taps that start on the room itself.
+$('#stage').addEventListener('touchend', (e) => { if (!os.el.contains(e.target)) e.preventDefault(); }, { passive: false });
 addEventListener('keydown', (e) => {
   if (state === 'boot' && !bootBtn.disabled && e.key !== 'Tab') { e.preventDefault(); boot(); return; }
   if (state !== 'boot' && !e.repeat && !['Shift', 'Control', 'Alt', 'Meta', 'CapsLock'].includes(e.key)) sound.key();
