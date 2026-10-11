@@ -41,12 +41,13 @@ To preview locally, run `python -m http.server 8000` in this folder and open htt
 ## Rebuilding the room
 
 ```
-pip install bpy numpy pillow scipy        # needs Python 3.13, the version the bpy wheel targets
-python tools/scene.py out final gpu       # modes: draft (~30 s CPU), medium, final; add "gpu" to use the graphics card
-cp out/desk.glb assets/desk.glb
+python3 -m venv .venv                     # once; .venv/ is git-ignored. Needs Python 3.13, the version the bpy wheel targets
+.venv/bin/pip install bpy numpy pillow scipy
+.venv/bin/python tools/scene.py out/final final gpu   # modes: draft, medium, final; "gpu" uses the graphics card
+cp out/final/desk.glb assets/desk.glb     # then set DESK_BYTES in js/scene.js to its new size
 ```
 
-A final bake took about 12 minutes on a 2-core CPU. The GPU path (OptiX/CUDA) is written but untested; the first log lines say which device it used.
+On Alex's Mac (Apple M2) the GPU path uses Metal: a final bake takes about 4 minutes. The very first GPU run is slower while Blender compiles its GPU code. On a 2-core CPU a final bake took about 12 minutes. The first log line says which device was used.
 
 ## How the 3D scene fits together
 

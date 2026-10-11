@@ -58,7 +58,7 @@ function placeOS() {
 const DESK_URL = 'assets/desk.glb';
 // Uncompressed size of desk.glb. GitHub Pages sends the file gzipped, so the reported total is the
 // smaller compressed size while the loaded count is uncompressed bytes; never divide by less than this.
-const DESK_BYTES = 2252420;
+const DESK_BYTES = 2253440;
 export function loadDesk(onProgress) {
   return new Promise((resolve, reject) => {
     new GLTFLoader().load(DESK_URL, resolve, (e) => {

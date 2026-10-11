@@ -4,3 +4,4 @@ __pycache__/
 *.blend1
 .claude/
 media-inbox/
+.venv/

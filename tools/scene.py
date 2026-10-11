@@ -385,8 +385,10 @@ parts.append(cyl('hub', 0.045, 0.06, (0, 0, 0.08), PLAS))
 parts.append(cyl('gas', 0.022, 0.34, (0, 0, 0.27), GREY))
 parts.append(box('mech', (0.2, 0.22, 0.04), (0, 0.02, 0.44), PLAS, bevel=0.006))
 parts.append(box('seat', (0.5, 0.48, 0.085), (0, 0.03, 0.5), FAB, bevel=0.035, seg=4))
-parts.append(box('spine', (0.06, 0.035, 0.32), (0, -0.235, 0.6), PLAS, rot=(R(-6), 0, 0), bevel=0.006))
-parts.append(box('back', (0.46, 0.075, 0.5), (0, -0.26, 0.92), FAB, rot=(R(-9), 0, 0), bevel=0.035, seg=4))
+# The backrest reclines (positive X rotation tips its top toward -Y, away from the seat).
+# It pivots on its bottom edge, which stays at about (y -0.30, z 0.67) just behind the seat.
+parts.append(box('spine', (0.06, 0.035, 0.36), (0, -0.285, 0.625), PLAS, rot=(R(14), 0, 0), bevel=0.006))
+parts.append(box('back', (0.46, 0.075, 0.5), (0, -0.355, 0.917), FAB, rot=(R(13), 0, 0), bevel=0.035, seg=4))
 for sx in (-1, 1):
     parts.append(box(f'armpost{sx}', (0.03, 0.05, 0.2), (sx * 0.255, -0.02, 0.6), PLAS, bevel=0.006))
     parts.append(box(f'armpad{sx}', (0.065, 0.25, 0.03), (sx * 0.255, 0.0, 0.71), PLAS, bevel=0.01, seg=3))
