@@ -72,14 +72,15 @@ const progress = (p) => {
 };
 const wait = (ms) => new Promise((r) => setTimeout(r, reduceMotion ? 0 : ms));
 const ok = (label) => print(`${label.padEnd(26, '.')} <span class="ok">OK</span>`);
+const CONTACT = 'Email <a href="mailto:AlexPhu2009@gmail.com">AlexPhu2009@gmail.com</a> or visit <a href="https://github.com/Alex-Phu">github.com/Alex-Phu</a>';
 
 /* ---------- Room + AlexOS ---------- */
 try {
   room.initScene(Object.keys(SPOTS), $('#stage'));
 } catch (e) {
-  print('WebGL ..................... FAILED');
+  print('WebGL ..................... <span class="err">FAILED</span>');
   print('\nThis browser cannot show the 3D desk.');
-  print('Email AlexPhu2009@gmail.com or visit github.com/Alex-Phu');
+  print(CONTACT);
   throw e;
 }
 const os = createOS(OS_APPS);
@@ -183,17 +184,25 @@ async function start() {
   print('Checking WebGL'.padEnd(26, '.') + ' <span class="ok">OK</span>');
   progress(0.05);
   print('Loading baked desk'.padEnd(26, '.') + ' 0%');
-  let gltf = null;
+  let gltf;
   try {
     gltf = await room.loadDesk((p) => {
       progress(0.05 + p * 0.75);
       lines[lines.length - 1] = 'Loading baked desk'.padEnd(26, '.') + ' ' + Math.round(p * 100) + '%';
       log.innerHTML = lines.join('\n');
     });
-  } catch (e) { console.warn('desk.glb failed to load, using simple shapes', e); }
+  } catch (e) {
+    // no room to show: say so plainly and leave BOOT disabled
+    console.error('Could not load the 3D room', e);
+    lines.pop();
+    print('Loading baked desk'.padEnd(26, '.') + ' <span class="err">FAILED</span>');
+    print('\nThe 3D room could not load. Check your connection and refresh the page.');
+    print(CONTACT);
+    bar.hidden = true;
+    return;
+  }
   lines.pop();
-  if (gltf) { room.useDesk(gltf); ok('Loading baked desk'); }
-  else { room.buildFallback(); print('Loading baked desk'.padEnd(26, '.') + ' <span class="ok">SIMPLE MODE</span>'); }
+  room.useDesk(gltf); ok('Loading baked desk');
   room.addGlows();
   progress(0.85); await wait(150);
   ok('Mounting AlexOS'); progress(0.7); await wait(200);

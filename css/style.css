@@ -35,6 +35,8 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--s
 #bios .hdr { color: var(--accent); }
 #bios pre { margin: 0; font: inherit; white-space: pre-wrap; }
 #bios .ok { color: var(--accent); }
+#bios .err { color: #ef6f5e; }
+#bios a { color: var(--accent); }
 #boot {
   margin-top: 18px; align-self: flex-start; font: inherit; color: var(--bios-bg); background: var(--bios-ink);
   border: 0; padding: 4px 14px; cursor: pointer;
