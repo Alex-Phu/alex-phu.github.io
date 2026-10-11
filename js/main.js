@@ -1,60 +1,10 @@
-/* Entry point: page content, BIOS boot screen, page state and the render loop. */
+/* Entry point: loads the content from data/, runs the BIOS boot screen, page state and the render loop. */
 import { sound } from './sound.js';
 import { createOS } from './os.js';
 import * as room from './scene.js';
 
 const $ = (s) => document.querySelector(s);
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-/* ---------- Content ---------- */
-const SPOTS = {
-  computer: { label: 'Computer', hint: 'Click to use AlexOS' },
-  askaapm: {
-    label: 'AskAAPM', hint: 'First-author research',
-    tag: 'FIRST AUTHOR · SUMMER 2026', title: 'AskAAPM',
-    body: 'A retrieval-augmented system that answers questions about AAPM Task Group Reports and cites the source passages. Submitted to the AAPM 2027 Spring Clinical Conference and the Journal of Applied Clinical Medical Physics.',
-    tech: ['RAG', 'FastAPI', 'Streamlit', 'FastMCP'], link: ['View GitHub', 'https://github.com/Alex-Phu/'],
-  },
-  shield: {
-    label: '3D shield', hint: 'Medical physics',
-    tag: 'CONTRIBUTOR · SUMMER 2026', title: '3D-Printed Shield',
-    body: 'An application that turns treatment-planning CT data into a printable STL shield and an updated DICOM RT Structure Set for gynecologic brachytherapy. Manuscript submitted to Brachytherapy.',
-    tech: ['Python', 'DICOM', 'STL', '3D printing'],
-  },
-  kinetiq: {
-    label: 'KinetIQ', hint: 'Swing analyzer',
-    tag: 'COMPUTER VISION · SPORT · 2026–', title: 'KinetIQ',
-    body: 'An AI-assisted swing analyzer that tracks body and racket motion from video, then turns it into timing and consistency feedback for players and coaches. Submitted to the 2026 Congressional App Challenge.',
-    tech: ['Computer vision', 'Biomechanics', 'Data viz'],
-  },
-  chess: {
-    label: 'ChessAI', hint: 'AR chess assistant',
-    tag: 'COMPUTER VISION · AR · 2025–26', title: 'ChessAI Assistant',
-    body: 'Custom YOLO models and OpenCV read the board from Ray-Ban Meta camera feeds. Stockfish then suggests moves and explains tactics as the game unfolds.',
-    tech: ['YOLO', 'OpenCV', 'Python', 'Stockfish'],
-  },
-};
-
-const OS_APPS = {
-  about: { glyph: 'i', label: 'About', html: `
-    <h3>Hi, I'm Alex.</h3>
-    <p>Greenhill School, Class of 2027. I build software that turns complex information into tools people can use, across medicine, health, and sport.</p>
-    <p>Two summers in UT Southwestern's Medical AI and Automation Lab. Varsity tennis. Founder of Greenhill's Buddhist Affinity Group.</p>
-    <p class="meta">Tip: click objects on the desk to see more projects.</p>` },
-  research: { glyph: 'R', label: 'Research', html: `
-    <div class="item"><h3>AskAAPM</h3><p class="meta">First author · submitted to AAPM 2027 Spring Clinical Conference and JACMP</p><p>Cited question answering over AAPM Task Group Reports.</p></div>
-    <div class="item"><h3>3D-Printed Radiation Shield</h3><p class="meta">Contributor · submitted to Brachytherapy</p><p>CT data to a printable patient-specific shield.</p></div>
-    <div class="item"><h3>VISTA-3D Segmentation Pipeline</h3><p class="meta">Lab project · 2025</p><p>Python and FastAPI around NVIDIA VISTA-3D in Docker.</p></div>` },
-  projects: { glyph: 'P', label: 'Projects', html: `
-    <div class="item"><h3>KinetIQ</h3><p>Swing analysis from video with computer vision.</p></div>
-    <div class="item"><h3>ChessAI Assistant</h3><p>YOLO + OpenCV + Stockfish on smart-glasses video.</p></div>
-    <div class="item"><h3>Vital Tracker + BreathWork</h3><p>SwiftUI and HealthKit apps. <a href="https://devpost.com/software/easybreathe-wl5s60" target="_blank" rel="noopener">Devpost</a></p></div>
-    <div class="item"><h3>RV Park Comparison</h3><p>Search and compare parks by amenities and pricing. <a href="https://rvparkcomparison.lovable.app/" target="_blank" rel="noopener">Open</a></p></div>` },
-  contact: { glyph: '@', label: 'Contact', html: `
-    <h3>Say hello</h3>
-    <p>Email: <span id="mail">AlexPhu2009@gmail.com</span><button class="copy" type="button" data-copy>Copy</button></p>
-    <p><a href="https://github.com/Alex-Phu/" target="_blank" rel="noopener">GitHub</a> &nbsp; <a href="https://www.linkedin.com/in/alexander-phu-1bb2b02b6/" target="_blank" rel="noopener">LinkedIn</a></p>` },
-};
 
 /* ---------- Sound button ---------- */
 const soundBtn = $('#soundBtn');
@@ -73,6 +23,42 @@ const progress = (p) => {
 const wait = (ms) => new Promise((r) => setTimeout(r, reduceMotion ? 0 : ms));
 const ok = (label) => print(`${label.padEnd(26, '.')} <span class="ok">OK</span>`);
 const CONTACT = 'Email <a href="mailto:AlexPhu2009@gmail.com">AlexPhu2009@gmail.com</a> or visit <a href="https://github.com/Alex-Phu">github.com/Alex-Phu</a>';
+
+/* ---------- Content: data/site.json and data/projects.json ---------- */
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const linkHtml = (l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`;
+async function loadJSON(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
+  return res.json();
+}
+let site, projects;
+try {
+  [site, { projects }] = await Promise.all([loadJSON('data/site.json'), loadJSON('data/projects.json')]);
+} catch (e) {
+  print('Loading projects'.padEnd(26, '.') + ' <span class="err">FAILED</span>');
+  print('\nThe site content could not load. Check your connection and refresh the page.');
+  print(CONTACT);
+  bar.hidden = true;
+  throw e;
+}
+
+// Clickable objects, keyed by Blender name prefix: the computer plus every project with an object in the room
+const SPOTS = { computer: site.computer };
+for (const p of projects) if (p.prefix) SPOTS[p.prefix] = p;
+
+// AlexOS windows. Research and Projects list every project of that kind, in file order.
+const osItem = (p) => `<div class="item"><h3>${esc(p.osTitle || p.title)}</h3>${p.meta ? `<p class="meta">${esc(p.meta)}</p>` : ''}`
+  + `<p>${esc(p.short)}${(p.links || []).map((l) => ' ' + linkHtml(l)).join('')}</p></div>`;
+const osList = (kind) => projects.filter((p) => p.kind === kind).map(osItem).join('');
+const OS_APPS = {
+  about: { glyph: 'i', label: 'About', html: `<h3>${esc(site.about.title)}</h3>${site.about.paragraphs.map((t) => `<p>${esc(t)}</p>`).join('')}<p class="meta">${esc(site.about.tip)}</p>` },
+  research: { glyph: 'R', label: 'Research', html: osList('research') },
+  projects: { glyph: 'P', label: 'Projects', html: osList('project') },
+  contact: { glyph: '@', label: 'Contact', html: `<h3>${esc(site.contact.title)}</h3>`
+    + `<p>Email: <span id="mail">${esc(site.email)}</span><button class="copy" type="button" data-copy>Copy</button></p>`
+    + `<p>${site.contact.links.map(linkHtml).join(' &nbsp; ')}</p>` },
+};
 
 /* ---------- Room + AlexOS ---------- */
 try {
@@ -119,10 +105,10 @@ function select(id) {
   }
   const s = SPOTS[id];
   setState('focus', id);
-  $('#cTag').textContent = s.tag; $('#cTitle').textContent = s.title; $('#cBody').textContent = s.body;
-  $('#cTech').innerHTML = s.tech.map((t) => `<li>${t}</li>`).join('');
-  const link = $('#cLink');
-  if (s.link) { link.hidden = false; link.textContent = s.link[0] + ' ↗'; link.href = s.link[1]; } else link.hidden = true;
+  $('#cTag').textContent = s.tag; $('#cTitle').textContent = s.title; $('#cBody').textContent = s.summary;
+  $('#cTech').innerHTML = (s.tech || []).map((t) => `<li>${esc(t)}</li>`).join('');
+  const link = $('#cLink'), first = (s.links || [])[0];
+  if (first) { link.hidden = false; link.textContent = first.label + ' ↗'; link.href = first.url; } else link.hidden = true;
   card.hidden = false;
   room.goTo(room.spotView(id), 1100);
 }
@@ -146,7 +132,7 @@ addEventListener('pointermove', (e) => {
   const id = room.pick();
   setHover(id === focusId ? null : id);
   if (hovered && e.pointerType === 'mouse') {
-    tip.innerHTML = `${SPOTS[hovered].label}<small>${SPOTS[hovered].hint}</small>`;
+    tip.innerHTML = `${esc(SPOTS[hovered].label)}<small>${esc(SPOTS[hovered].hint)}</small>`;
     tip.style.left = e.clientX + 'px'; tip.style.top = e.clientY + 'px'; tip.hidden = false;
   } else tip.hidden = true;
 });
