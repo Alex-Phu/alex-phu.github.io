@@ -236,34 +236,16 @@ async function loadTextures(onProgress) {
     onProgress(++done / els.length);
   }
 }
-export async function loadDesk(onProgress) {
-  // The model is embedded at the end of this file, so a downloaded copy works on its own.
-  const inline = document.getElementById('desk-geo');
-  if (inline && inline.textContent.length > 1000) {
-    await loadTextures((p) => onProgress(p * 0.9));
-    const gltf = await decodeDesk(inline.textContent);
-    onProgress(1);
-    return gltf;
-  }
-  const res = await fetch('desk-model.txt');
-  if (!res.ok) throw new Error('desk-model.txt: HTTP ' + res.status);
-  const total = Number(res.headers.get('content-length')) || 2960000;
-  const parts = [];
-  let got = 0;
-  if (res.body && res.body.getReader) {
-    const reader = res.body.getReader();
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      parts.push(value); got += value.length; onProgress(Math.min(1, got / total));
-    }
-  } else parts.push(new Uint8Array(await res.arrayBuffer()));
-  const text = new TextDecoder().decode(await new Blob(parts).arrayBuffer());
-  const raw = atob(text.trim());
-  const bytes = new Uint8Array(raw.length);
-  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-  onProgress(1);
-  return new Promise((resolve, reject) => new GLTFLoader().parse(bytes.buffer, '', resolve, reject));
+// Downloads the baked room. onProgress gets 0..1 as the bytes arrive.
+const DESK_URL = 'assets/desk.glb';
+const DESK_BYTES = 2252420; // size estimate, used only if the server does not send a length
+export function loadDesk(onProgress) {
+  return new Promise((resolve, reject) => {
+    new GLTFLoader().load(DESK_URL, resolve, (e) => {
+      const total = e.lengthComputable && e.total ? e.total : DESK_BYTES;
+      onProgress(Math.min(0.99, e.loaded / total)); // 100% once the model is decoded
+    }, reject);
+  }).then((gltf) => { onProgress(1); return gltf; });
 }
 export function useDesk(gltf) {
   const root = gltf.scene;
