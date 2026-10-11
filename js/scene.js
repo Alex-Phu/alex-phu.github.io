@@ -49,11 +49,13 @@ function placeOS() {
 /* ---------- Baked model from Blender ---------- */
 // Downloads the baked room. onProgress gets 0..1 as the bytes arrive.
 const DESK_URL = 'assets/desk.glb';
-const DESK_BYTES = 2252420; // size estimate, used only if the server does not send a length
+// Uncompressed size of desk.glb. GitHub Pages sends the file gzipped, so the reported total is the
+// smaller compressed size while the loaded count is uncompressed bytes; never divide by less than this.
+const DESK_BYTES = 2252420;
 export function loadDesk(onProgress) {
   return new Promise((resolve, reject) => {
     new GLTFLoader().load(DESK_URL, resolve, (e) => {
-      const total = e.lengthComputable && e.total ? e.total : DESK_BYTES;
+      const total = Math.max(e.lengthComputable ? e.total : 0, DESK_BYTES);
       onProgress(Math.min(0.99, e.loaded / total)); // 100% once the model is decoded
     }, reject);
   }).then((gltf) => { onProgress(1); return gltf; });

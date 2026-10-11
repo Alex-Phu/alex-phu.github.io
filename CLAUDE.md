@@ -49,7 +49,7 @@ A final bake took about 12 minutes on a 2-core CPU. The GPU path (OptiX/CUDA) is
 - Clickable objects are found by name prefix: `computer_`, `askaapm_`, `shield_`, `kinetiq_`, `chess_`. Each prefix matches a key in the `SPOTS` object in `js/main.js`, which holds the card text. Objects without a prefix are decoration.
 - The `screen` plane marks where AlexOS is placed. The `sky` plane is the backdrop seen through the window.
 - Baking: an albedo pass (2048 px) times a diffuse lighting pass (1024 px, cleaned with a masked blur), then ACES tone mapping, saved as one JPEG atlas per group (room, desk, computer, props). The page uses `MeshBasicMaterial` with `NoToneMapping`.
-- The BIOS progress bar follows the real download of `desk.glb`. If the server sends no length, `DESK_BYTES` in `js/scene.js` is used as an estimate. If the model fails to load, the BIOS screen says so, shows the contact email, and BOOT stays disabled.
+- The BIOS progress bar follows the real download of `desk.glb`. GitHub Pages gzips the file, so the bar divides by `DESK_BYTES` in `js/scene.js`, the uncompressed size. Update it after a re-bake (`ls -l assets/desk.glb`). If the model fails to load, the BIOS screen says so, shows the contact email, and BOOT stays disabled.
 - Glow outlines are inflated back-face copies of each clickable mesh, offset in screen space. Pieces thinner than 3 mm (racket strings, filament) are left out so they do not fill with color.
 
 ## Content rules
